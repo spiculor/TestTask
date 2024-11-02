@@ -7,9 +7,11 @@ DATABASE_URL = "postgresql+asyncpg://user:password@db/tasks_db"
 engine = create_async_engine(DATABASE_URL, echo=True)
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine, class_=AsyncSession)
 
+
 async def get_db():
     async with SessionLocal() as session:
         yield session
+
 
 async def init_db():
     async with engine.begin() as conn:

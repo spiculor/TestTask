@@ -1,14 +1,17 @@
-from fastapi import FastAPI, Depends, HTTPException,Form
+from fastapi import FastAPI, Depends, HTTPException, Form
 from sqlalchemy.ext.asyncio import AsyncSession
-from app.auth.auth import register_user, login_user, refresh_access_token
-from app.database.database import get_db
+from app.auth.auth import register_user, login_user, refresh_access_token, get_current_user
+from app.database.database import get_db, init_db
 from app.schemas.schemas import UserCreate, TaskCreate, TaskBase, LoginData
 from app.database.crud import create_task, get_tasks, update_task, delete_task, get_task
 from typing import List, Optional
-from app.auth.auth  import get_current_user
-from app.database.database import init_db
 
 app = FastAPI()
+
+
+@app.on_event("startup")
+async def startup_event():
+    await init_db()
 
 
 @app.post("/auth/register")
@@ -63,8 +66,3 @@ async def delete_existing_task(task_id: int, db: AsyncSession = Depends(get_db),
         raise HTTPException(status_code=404, detail="Task not found")
     await delete_task(db, task_id, user_id)
     return {"detail": "Task deleted successfully"}
-
-
-@app.on_event("startup")
-async def on_startup():
-    await init_db()
