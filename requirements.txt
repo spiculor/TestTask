@@ -1,0 +1,9 @@
+fastapi
+pyjwt
+passlib[bcrypt]
+asyncpg
+redis
+sqlalchemy
+uvicorn
+python-multipart 
+bcrypt==3.2.0
